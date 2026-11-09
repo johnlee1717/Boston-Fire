@@ -1,14 +1,14 @@
 
 [
   {
-    "timestamp": "2026-11-09T09:00:00-05:00",
-    "channel": "Demo",
-    "text": "TEST ONLY: This is an example transcript, not a Boston Fire transmission."
+    "timestamp": "2026-11-09T09:43:23-05:00",
+    "channel": "unknown",
+    "text": "And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
   },
   {
-    "timestamp": "2026-11-09T09:01:00-05:00",
-    "channel": "Demo",
-    "text": "TEST ONLY: A second entry shows how multiple transmissions appear."
+    "timestamp": "2026-11-09T09:27:10-05:00",
+    "channel": "unknown",
+    "text": "And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
   }
 ]
   
