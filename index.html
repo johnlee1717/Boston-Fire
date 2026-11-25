@@ -74,6 +74,43 @@
   });
 })();
 </script>
+<section style="padding:15px;margin-bottom:15px;">
+  <h2>NAVIGATE</h2>
+
+  <input id="navigate-address" type="text"
+    placeholder="Enter street address or intersection"
+    style="width:100%;padding:12px;font-size:16px;box-sizing:border-box;">
+
+  <div style="display:flex;gap:10px;margin-top:10px;">
+    <button type="button" onclick="navigateAddress('apple')" style="flex:1;">
+      Apple Maps
+    </button>
+
+    <button type="button" onclick="navigateAddress('google')" style="flex:1;">
+      Google Maps
+    </button>
+  </div>
+</section>
+
+<script>
+function navigateAddress(provider) {
+  const address = document.getElementById('navigate-address').value.trim();
+
+  if (!address) {
+    alert('Please enter an address.');
+    return;
+  }
+
+  const destination = encodeURIComponent(address + ', Boston, MA');
+
+  const url = provider === 'apple'
+    ? 'https://maps.apple.com/?daddr=' + destination
+    : 'https://www.google.com/maps/dir/?api=1&destination=' + destination;
+
+  window.open(url, '_blank');
+}
+</script>
+
 <div id="card-viewer" hidden>
   <div style="padding:15px;background:#17212e;">
     <button type="button" id="close-card">
