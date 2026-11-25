@@ -22,14 +22,11 @@
       when verified location data is available.
     </p>
 
-    <div class="buttons">
-      <a id="running-card-link"
-         class="link"
-         target="_blank"
-         rel="noopener">
-        Access Running Card
-      </a>
-    </div>
+<div class="buttons" style="display:none">
+  <button type="button" id="running-card-link">
+    Access Running Card
+  </button>
+</div>
   </div>
 
   <p id="box-message" class="muted"></p>
@@ -66,7 +63,7 @@
       }
 
       heading.textContent = 'Box ' + box;
-      link.href = url;
+     link.dataset.imageUrl = url;
       link.click();
       result.hidden = false;
       message.textContent = '';
@@ -77,7 +74,53 @@
   });
 })();
 </script>
-<div class="toolbar"><input id="search" type="search" placeholder="Search addresses, companies, incidents" aria-label="Search incidents"><select id="filter" aria-label="Filter incidents"><option value="all">All</option><option value="active">Active</option><option value="closed">Closed</option></select></div><div id="incidents"></div><p class="muted">Map buttons open the selected map provider with the incident address as the destination. Your map app may ask permission to use your current location.</p></main><footer>Boston Fire Live Dispatch · Concept demonstration · Not an official emergency service</footer><script>const data=[{id:'DEMO-1042',time:'18:42:16',status:'active',type:'Reported building fire',address:'123 Example Street, Boston, MA',units:['Engine 10','Ladder 3','District 2','Engine 7'],logs:[['18:42:16','Dispatch','Engine 10 and Ladder 3 respond to a reported building fire.'],['18:44:02','Engine 10','Responding.'],['18:47:35','Dispatch','Engine 7 and District 2 added to the assignment.']]},{id:'DEMO-1041',time:'18:19:03',status:'active',type:'Alarm investigation',address:'200 Sample Avenue, Boston, MA',units:['Engine 4','Ladder 2'],logs:[['18:19:03','Dispatch','Engine 4 and Ladder 2 respond to an alarm investigation.'],['18:21:17','Engine 4','Responding.']]},{id:'DEMO-1040',time:'17:51:28',status:'closed',type:'Medical assist',address:'50 Placeholder Road, Boston, MA',units:['Engine 8'],logs:[['17:51:28','Dispatch','Engine 8 respond for medical assistance.'],['18:06:12','Engine 8','Available.']]}];const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function render(){const q=document.querySelector('#search').value.toLowerCase(),f=document.querySelector('#filter').value;document.querySelector('#incidents').innerHTML=data.filter(d=>(f==='all'||d.status===f)&&[d.id,d.address,d.type,...d.units].join(' ').toLowerCase().includes(q)).map(d=>{let dest=encodeURIComponent(d.address),apple='https://maps.apple.com/?daddr='+dest+'&dirflg=d',google='https://www.google.com/maps/dir/?api=1&destination='+dest+'&travelmode=driving';return `<article class="card"><div class="top"><div><div class="time">${esc(d.id)} · ${esc(d.time)} ET</div><div class="address">${esc(d.address)}</div><div class="type">${esc(d.type)}</div></div><span class="status">${d.status==='active'?'Active':'Closed'}</span></div><div class="units">${d.units.map(u=>`<span class="unit">${esc(u)}</span>`).join('')}</div><div class="buttons"><button class="secondary" onclick="toggle('${d.id}')" aria-expanded="false" id="btn-${d.id}">View transmissions</button><a class="link" target="_blank" rel="noopener" href="${apple}">Apple Maps</a><a class="link secondary" target="_blank" rel="noopener" href="${google}">Google Maps</a></div><div class="detail" id="${d.id}"><h3>Transmission timeline</h3>${d.logs.map(l=>`<div class="transmission"><small>${esc(l[0])} ET · ${esc(l[1])}</small><p>${esc(l[2])}</p></div>`).join('')}<p class="muted">Audio playback will be enabled after an authorized live feed is connected.</p></div></article>`}).join('')||'<p>No matching incidents.</p>'}function toggle(id){const d=document.getElementById(id),b=document.getElementById('btn-'+id),open=d.classList.toggle('open');b.setAttribute('aria-expanded',open);b.textContent=open?'Hide transmissions':'View transmissions'}document.querySelector('#search').addEventListener('input',render);document.querySelector('#filter').addEventListener('change',render);render();</script><section id="live-radio"
+<div id="card-viewer" hidden>
+  <div style="padding:15px;background:#17212e;">
+    <button type="button" id="close-card">
+      ← Back to FIRE BOX
+    </button>
+  </div>
+  <div style="flex:1;overflow:auto;">
+    <img id="card-image" alt="Running Card"
+         style="display:block;width:100%;height:auto;">
+  </div>
+</div>
+
+<style>
+#card-viewer[hidden] {
+  display:none;
+}
+#card-viewer {
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:#111820;
+  display:flex;
+  flex-direction:column;
+}
+</style>
+
+<script>
+(function () {
+  const viewer = document.getElementById('card-viewer');
+  const image = document.getElementById('card-image');
+  const link = document.getElementById('running-card-link');
+
+  link.addEventListener('click', function () {
+    image.src = link.dataset.imageUrl;
+    viewer.hidden = false;
+    document.body.style.overflow = 'hidden';
+  });
+
+  document.getElementById('close-card')
+    .addEventListener('click', function () {
+      viewer.hidden = true;
+      image.removeAttribute('src');
+      document.body.style.overflow = '';
+    });
+})();
+</script>
+  <div class="toolbar"><input id="search" type="search" placeholder="Search addresses, companies, incidents" aria-label="Search incidents"><select id="filter" aria-label="Filter incidents"><option value="all">All</option><option value="active">Active</option><option value="closed">Closed</option></select></div><div id="incidents"></div><p class="muted">Map buttons open the selected map provider with the incident address as the destination. Your map app may ask permission to use your current location.</p></main><footer>Boston Fire Live Dispatch · Concept demonstration · Not an official emergency service</footer><script>const data=[{id:'DEMO-1042',time:'18:42:16',status:'active',type:'Reported building fire',address:'123 Example Street, Boston, MA',units:['Engine 10','Ladder 3','District 2','Engine 7'],logs:[['18:42:16','Dispatch','Engine 10 and Ladder 3 respond to a reported building fire.'],['18:44:02','Engine 10','Responding.'],['18:47:35','Dispatch','Engine 7 and District 2 added to the assignment.']]},{id:'DEMO-1041',time:'18:19:03',status:'active',type:'Alarm investigation',address:'200 Sample Avenue, Boston, MA',units:['Engine 4','Ladder 2'],logs:[['18:19:03','Dispatch','Engine 4 and Ladder 2 respond to an alarm investigation.'],['18:21:17','Engine 4','Responding.']]},{id:'DEMO-1040',time:'17:51:28',status:'closed',type:'Medical assist',address:'50 Placeholder Road, Boston, MA',units:['Engine 8'],logs:[['17:51:28','Dispatch','Engine 8 respond for medical assistance.'],['18:06:12','Engine 8','Available.']]}];const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function render(){const q=document.querySelector('#search').value.toLowerCase(),f=document.querySelector('#filter').value;document.querySelector('#incidents').innerHTML=data.filter(d=>(f==='all'||d.status===f)&&[d.id,d.address,d.type,...d.units].join(' ').toLowerCase().includes(q)).map(d=>{let dest=encodeURIComponent(d.address),apple='https://maps.apple.com/?daddr='+dest+'&dirflg=d',google='https://www.google.com/maps/dir/?api=1&destination='+dest+'&travelmode=driving';return `<article class="card"><div class="top"><div><div class="time">${esc(d.id)} · ${esc(d.time)} ET</div><div class="address">${esc(d.address)}</div><div class="type">${esc(d.type)}</div></div><span class="status">${d.status==='active'?'Active':'Closed'}</span></div><div class="units">${d.units.map(u=>`<span class="unit">${esc(u)}</span>`).join('')}</div><div class="buttons"><button class="secondary" onclick="toggle('${d.id}')" aria-expanded="false" id="btn-${d.id}">View transmissions</button><a class="link" target="_blank" rel="noopener" href="${apple}">Apple Maps</a><a class="link secondary" target="_blank" rel="noopener" href="${google}">Google Maps</a></div><div class="detail" id="${d.id}"><h3>Transmission timeline</h3>${d.logs.map(l=>`<div class="transmission"><small>${esc(l[0])} ET · ${esc(l[1])}</small><p>${esc(l[2])}</p></div>`).join('')}<p class="muted">Audio playback will be enabled after an authorized live feed is connected.</p></div></article>`}).join('')||'<p>No matching incidents.</p>'}function toggle(id){const d=document.getElementById(id),b=document.getElementById('btn-'+id),open=d.classList.toggle('open');b.setAttribute('aria-expanded',open);b.textContent=open?'Hide transmissions':'View transmissions'}document.querySelector('#search').addEventListener('input',render);document.querySelector('#filter').addEventListener('change',render);render();</script><section id="live-radio"
   style="max-width:720px;margin:24px auto;padding:20px;
   background:#17212e;color:white;border-radius:14px;
   font-family:Arial,sans-serif">
