@@ -79,6 +79,13 @@
     <button type="button" id="close-card">
       ← Back to FIRE BOX
     </button>
+    <div id="box-location" style="margin-top:10px;font-weight:bold;color:white;"></div>
+<div id="box-district" style="margin-top:5px;color:white;"></div>
+<div id="box-navigation" style="margin-top:10px;" hidden>
+  <a id="apple-maps" target="_blank" style="color:white;margin-right:20px;">Apple Maps</a>
+  <a id="google-maps" target="_blank" style="color:white;">Google Maps</a>
+</div>
+
   </div>
   <div style="flex:1;overflow:auto;">
     <img id="card-image" alt="Running Card"
@@ -108,6 +115,51 @@
 
   link.addEventListener('click', function () {
     image.src = link.dataset.imageUrl;
+    const boxId = link.dataset.imageUrl.split('/').pop().replace(/\.png$/i, '');
+    const location = document.getElementById('box-location');
+    const district = document.getElementById('box-district');
+    const navigation = document.getElementById('box-navigation');
+
+    location.textContent = 'Loading box information...';
+    district.textContent = '';
+    navigation.hidden = true;
+
+    fetch('./boxes_draft.json')
+      .then(response => response.json())
+      .then(boxes => {
+        if (image.getAttribute('src') !== link.dataset.imageUrl ||
+            link.dataset.imageUrl.split('/').pop().replace(/\.png$/i, '') !== boxId) return;
+
+        const info = boxes[boxId];
+
+        if (!info) {
+          location.textContent = 'Box ' + boxId;
+          return;
+        }
+
+        location.textContent = 'Box ' + boxId + ' — ' +
+          (info.navigation_address || info.location || 'Location unavailable');
+
+        district.textContent = 'District ' +
+          (info.district || 'Unknown') + ' · Division ' +
+          (info.division || 'Unknown');
+
+        if (info.address_user_confirmed === true && info.navigation_address) {
+          const address = encodeURIComponent(info.navigation_address);
+
+          document.getElementById('apple-maps').href =
+            'https://maps.apple.com/?daddr=' + address;
+
+          document.getElementById('google-maps').href =
+            'https://www.google.com/maps/dir/?api=1&destination=' + address;
+
+          navigation.hidden = false;
+        }
+      })
+      .catch(() => {
+        location.textContent = 'Box information unavailable';
+      });
+
     viewer.hidden = false;
     document.body.style.overflow = 'hidden';
   });
